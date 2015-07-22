@@ -13,7 +13,7 @@ public class Answer {
     private Question question;
 
     @Embedded
-    private Contents contents;
+    private Contents contents = new Contents();
 
     public Answer() {
     }

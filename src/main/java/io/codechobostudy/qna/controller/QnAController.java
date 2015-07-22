@@ -1,7 +1,9 @@
 package io.codechobostudy.qna.controller;
 
 
+import io.codechobostudy.qna.domain.Answer;
 import io.codechobostudy.qna.domain.Question;
+import io.codechobostudy.qna.repository.AnswerRepository;
 import io.codechobostudy.qna.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,19 +11,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
+import static org.springframework.web.bind.annotation.RequestMethod.*;
+
 @Controller
-public class QnAController {
+public class QnaController {
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    AnswerRepository answerRepository;
 
-    @RequestMapping
+    @RequestMapping("/")
     public String index() {
         return "index";
     }
@@ -38,13 +41,13 @@ public class QnAController {
         return "qna/questions";
     }
 
-    @RequestMapping(value = "/questions/add", method = RequestMethod.GET)
+    @RequestMapping(value = "/questions/add", method = GET)
     public String addQuestion() {
         return "qna/addQuestion";
     }
 
 
-    @RequestMapping(value = "/questions/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/questions/add", method = POST)
     public String addQuestion(@RequestParam String title, @RequestParam String body) {
         Question question = new Question();
         question.setTitle(title);
@@ -56,7 +59,7 @@ public class QnAController {
         return "redirect:/questions";
     }
 
-    @RequestMapping(value = "/questions/{questionId}/edit", method = RequestMethod.GET)
+    @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
     public String editQuestion(Model model, @PathVariable long questionId) {
         Question question = questionRepository.findOne(questionId);
         model.addAttribute("question", question);
@@ -65,7 +68,7 @@ public class QnAController {
     }
 
 
-    @RequestMapping(value = "/questions/{questionId}/edit", method = RequestMethod.POST)
+    @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
     public String editQuestion(
             Model model,
             @PathVariable long questionId,
@@ -97,4 +100,44 @@ public class QnAController {
 
         return "qna/question";
     }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/questions/{questionId}/answers", method = POST)
+    public void addAnswer(@PathVariable long questionId, @RequestParam String body) {
+        Question question = questionRepository.findOne(questionId);
+
+        Answer answer = new Answer();
+        answer.getContents().setBody(body);
+        answer.getContents().setCreateDate(new Date());
+        answer.setQuestion(question);
+
+        answerRepository.save(answer);
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
+    public void editAnswer(
+            @PathVariable long questionId,
+            @PathVariable long answerId,
+            @RequestParam String body) {
+        Question question = questionRepository.findOne(questionId);
+        Answer answer = answerRepository.findOne(answerId);
+
+        answer.getContents().setBody(body);
+        answer.getContents().setModifyDate(new Date());
+        answer.setQuestion(question);
+
+        answerRepository.save(answer);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/questions/{questionId}/answers/{answerId}", method = DELETE)
+    public void deleteAnswer(
+            @PathVariable long answerId) {
+        answerRepository.delete(answerId);
+    }
+
+
 }
