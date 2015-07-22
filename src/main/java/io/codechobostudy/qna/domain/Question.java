@@ -11,7 +11,7 @@ public class Question {
     private Long id;
     private String title;
     @Embedded
-    private Contents contents;
+    private Contents contents = new Contents();
 
     @OneToMany(mappedBy = "question")
     private List<Answer> answers = new ArrayList<>();

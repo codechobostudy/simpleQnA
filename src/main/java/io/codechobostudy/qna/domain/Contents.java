@@ -6,14 +6,15 @@ import java.util.Date;
 @Embeddable
 public class Contents {
     private String body;
-    private Date date;
+    private Date createDate;
+    private Date modifyDate;
 
     public Contents() {
     }
 
-    public Contents(String body, Date date) {
+    public Contents(String body, Date createDate) {
         this.body = body;
-        this.date = date;
+        this.createDate = createDate;
     }
 
     public String getBody() {
@@ -24,11 +25,19 @@ public class Contents {
         this.body = body;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getModifyDate() {
+        return modifyDate;
+    }
+
+    public void setModifyDate(Date modifyDate) {
+        this.modifyDate = modifyDate;
     }
 }
