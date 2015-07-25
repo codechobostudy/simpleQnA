@@ -1,4 +1,4 @@
-package io.codechobostudy.qna.domain;
+package io.codechobostudy.qna.domain.qna;
 
 import javax.persistence.*;
 

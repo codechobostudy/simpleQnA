@@ -1,10 +1,10 @@
-package io.codechobostudy.qna.controller;
+package io.codechobostudy.qna.controller.qna;
 
 
-import io.codechobostudy.qna.domain.Answer;
-import io.codechobostudy.qna.domain.Question;
-import io.codechobostudy.qna.repository.AnswerRepository;
-import io.codechobostudy.qna.repository.QuestionRepository;
+import io.codechobostudy.qna.domain.qna.Answer;
+import io.codechobostudy.qna.domain.qna.Question;
+import io.codechobostudy.qna.repository.qna.AnswerRepository;
+import io.codechobostudy.qna.repository.qna.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

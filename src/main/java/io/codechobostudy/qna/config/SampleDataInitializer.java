@@ -1,12 +1,12 @@
 package io.codechobostudy.qna.config;
 
-import io.codechobostudy.qna.domain.Answer;
-import io.codechobostudy.qna.domain.Contents;
-import io.codechobostudy.qna.domain.Question;
+import io.codechobostudy.qna.domain.qna.Answer;
+import io.codechobostudy.qna.domain.qna.Contents;
+import io.codechobostudy.qna.domain.qna.Question;
 import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.dto.auth.UserCreateForm;
-import io.codechobostudy.qna.repository.AnswerRepository;
-import io.codechobostudy.qna.repository.QuestionRepository;
+import io.codechobostudy.qna.repository.qna.AnswerRepository;
+import io.codechobostudy.qna.repository.qna.QuestionRepository;
 import io.codechobostudy.qna.service.auth.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
