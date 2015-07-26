@@ -1,5 +1,6 @@
 package io.codechobostudy.qna.service.auth.user;
 
+import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.dto.auth.UserCreateForm;
 
@@ -16,4 +17,5 @@ public interface UserService {
 
     User create(UserCreateForm form);
 
+    User create(UserCreateForm form, Role role);
 }

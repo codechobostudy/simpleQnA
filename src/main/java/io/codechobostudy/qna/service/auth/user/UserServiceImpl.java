@@ -1,5 +1,6 @@
 package io.codechobostudy.qna.service.auth.user;
 
+import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.dto.auth.UserCreateForm;
 import io.codechobostudy.qna.repository.auth.UserRepository;
@@ -43,13 +44,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User create(UserCreateForm form) {
+    public User create(UserCreateForm form, Role role) {
         User user = new User();
         user.setEmail(form.getEmail());
         user.setPasswordHash(new BCryptPasswordEncoder().encode(form.getPassword()));
-        user.setRole(form.getRole());
+
+        user.setRole(role);
 
         return userRepository.save(user);
+    }
+
+    @Override
+    public User create(UserCreateForm form) {
+        return create(form, Role.USER);
     }
 
 }

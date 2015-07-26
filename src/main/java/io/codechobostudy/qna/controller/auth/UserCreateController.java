@@ -39,6 +39,7 @@ public class UserCreateController {
             // failed validation
             return "auth/userCreate";
         }
+
         try {
             userService.create(form);
         } catch (DataIntegrityViolationException e) {

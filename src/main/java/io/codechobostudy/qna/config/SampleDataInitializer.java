@@ -1,9 +1,9 @@
 package io.codechobostudy.qna.config;
 
+import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.domain.qna.Answer;
 import io.codechobostudy.qna.domain.qna.Contents;
 import io.codechobostudy.qna.domain.qna.Question;
-import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.dto.auth.UserCreateForm;
 import io.codechobostudy.qna.repository.qna.AnswerRepository;
 import io.codechobostudy.qna.repository.qna.QuestionRepository;
@@ -18,7 +18,6 @@ import java.util.List;
 
 @Configuration
 public class SampleDataInitializer {
-
     @Autowired
     QuestionRepository questionRepository;
     @Autowired
@@ -29,9 +28,10 @@ public class SampleDataInitializer {
         Date current = new Date();
         List<Question> questions = new ArrayList<>();
         for (int idx = 0; idx < 100; idx++) {
+
             Question question = new Question();
             question.setTitle("title" + idx);
-            question.setContents(new Contents("body" + idx, current));
+            question.setContents(new Contents(idx + " body!!!<br/>", current));
             questionRepository.save(question);
             questions.add(question);
         }
@@ -53,13 +53,12 @@ public class SampleDataInitializer {
     UserService userService;
 
     @PostConstruct
-    public void initUser(){
+    public void initUser() {
         UserCreateForm userCreateForm = new UserCreateForm();
-        userCreateForm.setRole(Role.ADMIN);
         userCreateForm.setEmail("admin@localhost");
         userCreateForm.setPassword("admin");
         userCreateForm.setPasswordRepeated("admin");
 
-        userService.create(userCreateForm);
+        userService.create(userCreateForm, Role.ADMIN);
     }
 }

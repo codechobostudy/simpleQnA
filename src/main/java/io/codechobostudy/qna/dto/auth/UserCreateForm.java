@@ -1,9 +1,6 @@
 package io.codechobostudy.qna.dto.auth;
 
-import io.codechobostudy.qna.domain.auth.Role;
 import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.validation.constraints.NotNull;
 
 public class UserCreateForm {
 
@@ -16,8 +13,6 @@ public class UserCreateForm {
     @NotEmpty
     private String passwordRepeated = "";
 
-    @NotNull
-    private Role role = Role.USER;
 
     public String getEmail() {
         return email;
@@ -43,21 +38,12 @@ public class UserCreateForm {
         this.passwordRepeated = passwordRepeated;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
     @Override
     public String toString() {
         return "UserCreateForm{" +
                 "email='" + email.replaceFirst("@.+", "@***") + '\'' +
                 ", password=***" + '\'' +
-                ", passwordRepeated=***" + '\'' +
-                ", role=" + role +
+                ", passwordRepeated=***" +
                 '}';
     }
 

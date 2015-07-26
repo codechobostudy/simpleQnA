@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>helloworld</title>
-</head>
-<body>
-
+<#import "../_basicLayout.ftl" as layout>
+<#assign contents>
 <div>
     <form action="/questions/add" method="post">
         <div>
@@ -18,6 +13,6 @@
         <input type="button" value="취소" onclick="location.href='/questions'">
     </form>
 </div>
+</#assign>
 
-</body>
-</html>
+<@layout.basic title="게시물 작성" contents=contents/>

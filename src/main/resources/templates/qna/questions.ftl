@@ -1,27 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>helloworld</title>
-</head>
-<body>
+<#import "./_sidebarLayout.ftl" as layout>
 
-<h1>질문리스트</h1>
-
+<#assign contents>
 <div>
-    <button onclick="location.href='/questions/add'">추가</button>
+    <a class="btn btn-default" href="/questions/add">질문하기</a>
 </div>
-<ul>
-<#list questions as question>
-    <li>
-        <div>
-            <a href="/questions/${question.id}">${question.title}</a>
-        </div>
-        <div>
-            answer : ${question.answers?size}
-        </div>
-    </li>
-</#list>
-</ul>
 
-</body>
-</html>
+<ul class="questions">
+    <#list questions as question>
+        <li>
+            <div>
+                <a href="/questions/${question.id}">${question.title}</a>
+            </div>
+            <div>
+                answer : ${question.answers?size}
+            </div>
+        </li>
+    </#list>
+</ul>
+</#assign><!-- /{contents} -->
+
+<@layout.sidebar title="Questions" contents=contents/>
+

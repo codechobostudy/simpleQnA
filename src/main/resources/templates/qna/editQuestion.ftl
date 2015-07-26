@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>helloworld</title>
-</head>
-<body>
+<#import "../_basicLayout.ftl" as layout>
+<#assign contents>
 
 <div>
     <form action="/questions/${question.id}/edit" method="post">
@@ -18,6 +14,6 @@
         <input type="button" value="취소" onclick="location.href='/questions/${question.id}'">
     </form>
 </div>
+</#assign>
 
-</body>
-</html>
+<@layout.basic title="수정하기" contents=contents/>
