@@ -59,6 +59,8 @@
     <form class="form-login" role="form" action="/login" method="post">
         <h1 class="form-signin-heading">Please Login</h1>
 
+        <div class="alert alert-info" role="alert">admin@localhost / admin 으로 접속하세요!!</div>
+
         <#if error.isPresent()>
             <div class="alert alert-warning" role="alert">이메일이나 비밀번호가 일치하지 않습니다.</div>
         </#if>
