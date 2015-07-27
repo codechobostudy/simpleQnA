@@ -27,12 +27,13 @@
     <div class="row">
         <div lass="btn-group" role="group">
             <a href="/questions" class="btn btn-default">목록으로</a>
-            <a href="/questions/${question.id}/edit" class="btn btn-default pull-right">수정</a>
-            <a href="/questions/${question.id}/delete" class="btn btn-default pull-right">삭제</a>
+            <#if currentUser?? && currentUser.role == "ADMIN">
+                <a href="/questions/${question.id}/edit" class="btn btn-default pull-right">수정</a>
+                <a href="/questions/${question.id}/delete" class="btn btn-default pull-right">삭제</a>
+            </#if>
         </div>
     </div>
 </div>
-
 
 <div class="answer-wrapper">
     <div class="answers">
