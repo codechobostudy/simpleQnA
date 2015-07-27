@@ -1,4 +1,4 @@
-package io.codechobostudy.qna.controller.auth;
+package io.codechobostudy.qna.controller.advisor;
 
 import io.codechobostudy.qna.domain.auth.CurrentUser;
 import org.slf4j.Logger;
