@@ -9,14 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
+//TODO 스프링 시큐리티 기반 controller 동작 컨트롤
 @Controller
 public class QnaController {
     @Autowired
@@ -41,12 +46,13 @@ public class QnaController {
         return "qna/questions";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/questions/add", method = GET)
     public String addQuestion() {
         return "qna/addQuestion";
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/questions/add", method = POST)
     public String addQuestion(@RequestParam String title, @RequestParam String body) {
         Question question = new Question();
@@ -59,6 +65,7 @@ public class QnaController {
         return "redirect:/questions";
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
     public String editQuestion(Model model, @PathVariable long questionId) {
         Question question = questionRepository.findOne(questionId);
@@ -67,7 +74,7 @@ public class QnaController {
         return "qna/editQuestion";
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
     public String editQuestion(
             Model model,
@@ -86,6 +93,7 @@ public class QnaController {
     }
 
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/questions/{questionId}/delete")
     public String deleteQuestion(@PathVariable long questionId) {
         questionRepository.delete(questionId);
@@ -115,7 +123,7 @@ public class QnaController {
         answerRepository.save(answer);
     }
 
-
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
     public void editAnswer(
@@ -132,6 +140,7 @@ public class QnaController {
         answerRepository.save(answer);
     }
 
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}", method = DELETE)
     public void deleteAnswer(
