@@ -1,6 +1,7 @@
 package io.codechobostudy.qna.config;
 
 import io.codechobostudy.qna.domain.auth.Role;
+import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.domain.qna.Answer;
 import io.codechobostudy.qna.domain.qna.Contents;
 import io.codechobostudy.qna.domain.qna.Question;
@@ -22,16 +23,26 @@ public class SampleDataInitializer {
     QuestionRepository questionRepository;
     @Autowired
     AnswerRepository answerRepository;
+    @Autowired
+    UserService userService;
+
 
     @PostConstruct
     public void initQna() {
+        UserCreateForm userCreateForm = new UserCreateForm();
+        userCreateForm.setEmail("admin@localhost");
+        userCreateForm.setPassword("admin");
+        userCreateForm.setPasswordRepeated("admin");
+
+        User user = userService.create(userCreateForm, Role.ADMIN);
+
         Date current = new Date();
         List<Question> questions = new ArrayList<>();
         for (int idx = 0; idx < 100; idx++) {
 
             Question question = new Question();
             question.setTitle("title" + idx);
-            question.setContents(new Contents(idx + " body!!!<br/>", current));
+            question.setContents(new Contents(idx + " body!!!<br/>", current, user));
             questionRepository.save(question);
             questions.add(question);
         }
@@ -39,7 +50,7 @@ public class SampleDataInitializer {
         for (Question question : questions) {
             for (int idx = 0; idx < 3; idx++) {
                 String body = "question : " + question.getTitle() + "answer : " + idx;
-                Answer answer = new Answer(question, new Contents(body, current));
+                Answer answer = new Answer(question, new Contents(body, current, user));
                 question.getAnswers().add(answer);
                 answerRepository.save(answer);
                 questionRepository.save(question);
@@ -48,17 +59,4 @@ public class SampleDataInitializer {
         }
     }
 
-
-    @Autowired
-    UserService userService;
-
-    @PostConstruct
-    public void initUser() {
-        UserCreateForm userCreateForm = new UserCreateForm();
-        userCreateForm.setEmail("admin@localhost");
-        userCreateForm.setPassword("admin");
-        userCreateForm.setPasswordRepeated("admin");
-
-        userService.create(userCreateForm, Role.ADMIN);
-    }
 }
