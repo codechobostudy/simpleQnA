@@ -42,6 +42,7 @@ public class QnaController {
 
         Page<Question> questionPage = questionRepository.findAll(new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate"));
         model.addAttribute("questions", questionPage.getContent());
+        model.addAttribute("questionPage", questionPage.getTotalPages());
 
         return "qna/questions";
     }
