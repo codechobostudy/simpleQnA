@@ -38,7 +38,7 @@ public class SampleDataInitializer {
 
         Date current = new Date();
         List<Question> questions = new ArrayList<>();
-        for (int idx = 0; idx < 100; idx++) {
+        for (int idx = 0; idx < 30; idx++) {
 
             Question question = new Question();
             question.setTitle("title" + idx);
