@@ -43,6 +43,7 @@ public class QnaController {
         );
 
         model.addAttribute("questions", questionPage.getContent());
+        model.addAttribute("questionPage", questionPage.getTotalPages());
 
         return "qna/questions";
     }
