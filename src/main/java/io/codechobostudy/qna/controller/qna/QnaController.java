@@ -12,16 +12,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 
+import java.beans.PropertyEditorSupport;
 import java.util.Date;
 
 import static org.springframework.web.bind.annotation.RequestMethod.*;
 
-//TODO 스프링 시큐리티 기반 controller 동작 컨트롤
 @Controller
 public class QnaController {
     @Autowired
@@ -40,21 +38,25 @@ public class QnaController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
 
-        Page<Question> questionPage = questionRepository.findAll(new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate"));
+        Page<Question> questionPage = questionRepository.findAll(
+                new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate")
+        );
+
         model.addAttribute("questions", questionPage.getContent());
 
         return "qna/questions";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/add", method = GET)
     public String addQuestion() {
         return "qna/addQuestion";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/add", method = POST)
     public String addQuestion(@RequestParam String title, @RequestParam String body) {
+
         Question question = new Question();
         question.setTitle(title);
         question.getContents().setBody(body);
@@ -65,24 +67,22 @@ public class QnaController {
         return "redirect:/questions";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
-    public String editQuestion(Model model, @PathVariable long questionId) {
-        Question question = questionRepository.findOne(questionId);
-        model.addAttribute("question", question);
+    public String editQuestion(Model model,
+            @PathVariable(value = "questionId") Question question) {
 
+        model.addAttribute(question);
         return "qna/editQuestion";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
     public String editQuestion(
-            Model model,
-            @PathVariable long questionId,
+            @PathVariable(value = "questionId") Question question,
             @RequestParam String title,
-            @RequestParam String body
-    ) {
-        Question question = questionRepository.findOne(questionId);
+            @RequestParam String body) {
+
         question.setTitle(title);
         question.getContents().setBody(body);
         question.getContents().setModifyDate(new Date());
@@ -93,11 +93,12 @@ public class QnaController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/delete")
-    public String deleteQuestion(@PathVariable long questionId) {
+    public String deleteQuestion(
+            @PathVariable(value="questionId") long questionId
+    ) {
         questionRepository.delete(questionId);
-
         return "redirect:/questions";
     }
 
@@ -111,9 +112,11 @@ public class QnaController {
 
 
     @ResponseBody
+    @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/{questionId}/answers", method = POST)
-    public void addAnswer(@PathVariable long questionId, @RequestParam String body) {
-        Question question = questionRepository.findOne(questionId);
+    public void addAnswer(
+            @PathVariable(value="questionId") Question question,
+            @RequestParam String body) {
 
         Answer answer = new Answer();
         answer.getContents().setBody(body);
@@ -123,15 +126,14 @@ public class QnaController {
         answerRepository.save(answer);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     @ResponseBody
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
     public void editAnswer(
-            @PathVariable long questionId,
-            @PathVariable long answerId,
+            @PathVariable(value = "questionId") Question question,
+            @PathVariable(value = "answerId") Answer answer,
             @RequestParam String body) {
-        Question question = questionRepository.findOne(questionId);
-        Answer answer = answerRepository.findOne(answerId);
 
         answer.getContents().setBody(body);
         answer.getContents().setModifyDate(new Date());
@@ -140,12 +142,33 @@ public class QnaController {
         answerRepository.save(answer);
     }
 
-    @PreAuthorize("hasAuthority('ADMIN')")
     @ResponseBody
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}", method = DELETE)
     public void deleteAnswer(
             @PathVariable long answerId) {
         answerRepository.delete(answerId);
+    }
+
+
+    @InitBinder
+    public void qnaInitBinder(WebDataBinder binder) {
+        // 질문 바인딩
+        binder.registerCustomEditor(Question.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String questionIdStr) throws IllegalArgumentException {
+                Long questionId = new Long(questionIdStr);
+                setValue(questionRepository.findOne(questionId));
+            }
+        });
+
+        binder.registerCustomEditor(Answer.class, new PropertyEditorSupport() {
+            @Override
+            public void setAsText(String answerIdStr) throws IllegalArgumentException {
+                Long answerId = new Long(answerIdStr);
+                setValue(answerRepository.findOne(answerId));
+            }
+        });
     }
 
 
