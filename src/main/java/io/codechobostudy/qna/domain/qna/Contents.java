@@ -4,11 +4,13 @@ import io.codechobostudy.qna.domain.auth.User;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import java.util.Date;
 
 @Embeddable
 public class Contents {
+    @Lob
     private String body;
     private Date createDate;
     private Date modifyDate;
