@@ -1,5 +1,6 @@
 package io.codechobostudy.qna.config;
 
+import com.thedeanda.lorem.Lorem;
 import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.domain.qna.Answer;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+// TODO 나중에 정리하기
 @Configuration
 public class SampleDataInitializer {
     @Autowired
@@ -33,6 +35,7 @@ public class SampleDataInitializer {
 
     @PostConstruct
     public void initQna() throws InterruptedException {
+
         //create user
         UserCreateForm userCreateForm = new UserCreateForm();
         userCreateForm.setEmail("admin@localhost");
@@ -60,8 +63,8 @@ public class SampleDataInitializer {
 
         for (int idx = 0; idx < 30; idx++) {
             Question question = new Question();
-            question.setTitle("title" + idx);
-            question.setContents(new Contents(idx + " body!!!<br/>", current, user));
+            question.setTitle(Lorem.getTitle(2, 7));
+            question.setContents(new Contents(Lorem.getHtmlParagraphs(2, 5), current, user));
             questions.add(question);
         }
 
@@ -81,8 +84,7 @@ public class SampleDataInitializer {
         for (Question question : questions) {
             int max = (int) (10 * Math.random());
             for (int idx = 0; idx < max; idx++) {
-                String body = "question : " + question.getTitle() + "answer : " + idx;
-                Answer answer = new Answer(question, new Contents(body, current, user));
+                Answer answer = new Answer(question, new Contents(Lorem.getHtmlParagraphs(2, 5), current, user));
                 question.getAnswers().add(answer);
                 answers.add(answer);
             }
