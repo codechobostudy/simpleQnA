@@ -38,12 +38,14 @@ public class QnaController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
 
+        // FIXME 서비스에서 처리하는 page-> 0부터 시작. UI 에서는 1에서 시작. 어케 처리해야 깔끔할까???
         Page<Question> questionPage = questionRepository.findAll(
                 new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate")
         );
 
         model.addAttribute("questions", questionPage.getContent());
-        model.addAttribute("questionPage", questionPage.getTotalPages());
+        model.addAttribute("totalPages", questionPage.getTotalPages());
+        model.addAttribute("currentPage", questionPage.getNumber() + 1);
 
         return "qna/questions";
     }
