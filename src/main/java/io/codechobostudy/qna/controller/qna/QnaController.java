@@ -23,6 +23,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
 public class QnaController {
+
     @Autowired
     QuestionRepository questionRepository;
     @Autowired
@@ -73,7 +74,7 @@ public class QnaController {
     @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
     public String editQuestion(Model model,
-            @PathVariable Question question) {
+            @PathVariable(value="questionId") Question question) {
 
         model.addAttribute(question);
         return "qna/editQuestion";
@@ -82,7 +83,7 @@ public class QnaController {
     @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
     public String editQuestion(
-            @PathVariable Question question,
+            @PathVariable(value="questionId") Question question,
             @RequestParam String title,
             @RequestParam String body) {
 
@@ -106,8 +107,7 @@ public class QnaController {
     }
 
     @RequestMapping("/questions/{questionId}")
-    public String question(Model model, @PathVariable long questionId) {
-        Question question = questionRepository.findOne(questionId);
+    public String question(Model model, @PathVariable(value="questionId") Question question) {
         model.addAttribute("question", question);
 
         return "qna/question";
@@ -118,7 +118,7 @@ public class QnaController {
     @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/{questionId}/answers", method = POST)
     public void addAnswer(
-            @PathVariable Question question,
+            @PathVariable(value="questionId") Question question,
             @RequestParam String body) {
 
         Answer answer = new Answer();
@@ -134,8 +134,8 @@ public class QnaController {
     @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
     public void editAnswer(
-            @PathVariable Question question,
-            @PathVariable Answer answer,
+            @PathVariable(value="questionId") Question question,
+            @PathVariable(value="answerId") Answer answer,
             @RequestParam String body) {
 
         answer.getContents().setBody(body);
@@ -147,7 +147,7 @@ public class QnaController {
 
     @ResponseBody
     @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
-    @RequestMapping(value = "/questions/{questionId}/answers/{answerId}", method = DELETE)
+    @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/delete", method = POST)
     public void deleteAnswer(
             @PathVariable long answerId) {
         answerRepository.delete(answerId);

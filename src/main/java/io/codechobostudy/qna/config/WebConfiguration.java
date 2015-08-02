@@ -4,6 +4,7 @@ import org.h2.tools.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+// TODO profile으로 비활성화 필요.
 @Configuration
 public class WebConfiguration {
 
