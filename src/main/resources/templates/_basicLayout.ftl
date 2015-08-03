@@ -21,10 +21,7 @@ ${css}
 
 <body>
 
-<div>
 <@navbar.nav/>
-</div>
-
 
 ${contents}
 
