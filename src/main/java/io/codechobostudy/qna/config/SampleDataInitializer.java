@@ -36,13 +36,21 @@ public class SampleDataInitializer {
     @PostConstruct
     public void initQna() throws InterruptedException {
 
-        //create user
+        //create user admin
         UserCreateForm userCreateForm = new UserCreateForm();
         userCreateForm.setEmail("admin@localhost");
         userCreateForm.setPassword("admin");
         userCreateForm.setPasswordRepeated("admin");
 
         User user = userService.create(userCreateForm, Role.ADMIN);
+
+        //create user user
+        UserCreateForm userCreateForm2 = new UserCreateForm();
+        userCreateForm2.setEmail("user@localhost");
+        userCreateForm2.setPassword("user");
+        userCreateForm2.setPasswordRepeated("user");
+        User user2 = userService.create(userCreateForm2, Role.USER);
+
 
         //create tags
         List<Tag> tags = new ArrayList<Tag>() {{
