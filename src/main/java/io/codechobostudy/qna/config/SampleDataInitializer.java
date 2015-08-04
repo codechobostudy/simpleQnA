@@ -84,7 +84,7 @@ public class SampleDataInitializer {
         for (Question question : questions) {
             int max = (int) (10 * Math.random());
             for (int idx = 0; idx < max; idx++) {
-                Answer answer = new Answer(question, new Contents(Lorem.getHtmlParagraphs(2, 5), current, user));
+                Answer answer = new Answer(new Contents(Lorem.getHtmlParagraphs(2, 5), current, user));
                 question.getAnswers().add(answer);
                 answers.add(answer);
             }

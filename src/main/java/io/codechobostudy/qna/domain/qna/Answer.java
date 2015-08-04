@@ -8,18 +8,13 @@ public class Answer {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "QUESTION_ID")
-    private Question question;
-
     @Embedded
     private Contents contents = new Contents();
 
     public Answer() {
     }
 
-    public Answer(Question question, Contents contents) {
-        this.question = question;
+    public Answer(Contents contents) {
         this.contents = contents;
     }
 
@@ -30,14 +25,6 @@ public class Answer {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public Contents getContents() {

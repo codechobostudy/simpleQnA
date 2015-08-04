@@ -1,15 +1,16 @@
 package io.codechobostudy.qna.controller.qna;
 
 
-import io.codechobostudy.qna.domain.qna.Answer;
+import io.codechobostudy.qna.domain.auth.CurrentUser;
 import io.codechobostudy.qna.domain.qna.Question;
-import io.codechobostudy.qna.repository.qna.AnswerRepository;
-import io.codechobostudy.qna.repository.qna.QuestionRepository;
+import io.codechobostudy.qna.dto.qna.AnswerForm;
+import io.codechobostudy.qna.dto.qna.QuestionForm;
+import io.codechobostudy.qna.service.qna.AnswerService;
+import io.codechobostudy.qna.service.qna.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,33 +18,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-
-import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class QnaController {
 
     @Autowired
-    QuestionRepository questionRepository;
+    AnswerService answerService;
     @Autowired
-    AnswerRepository answerRepository;
+    QuestionService questionService;
 
     @RequestMapping("/")
-    public String index() {
+    String index() {
         return "index";
     }
 
     @RequestMapping("/questions")
-    public String questions(
+    String questions(
             Model model,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "20") int size) {
 
         // FIXME 서비스에서 처리하는 page-> 0부터 시작. UI 에서는 1에서 시작. 어케 처리해야 깔끔할까???
-        Page<Question> questionPage = questionRepository.findAll(
-                new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate")
-        );
+        Page<Question> questionPage = questionService.findPages(page, size);
+
         model.addAttribute("questions", questionPage.getContent());
         model.addAttribute("totalPages", questionPage.getTotalPages());
         model.addAttribute("currentPage", questionPage.getNumber() + 1);
@@ -53,28 +52,23 @@ public class QnaController {
 
     @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/add", method = GET)
-    public String addQuestion() {
+    String addQuestion() {
         return "qna/addQuestion";
     }
 
     @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/add", method = POST)
-    public String addQuestion(@RequestParam String title, @RequestParam String body) {
+    String addQuestion(QuestionForm questionForm,
+                       @AuthenticationPrincipal CurrentUser currentUser) {
 
-        Question question = new Question();
-        question.setTitle(title);
-        question.getContents().setBody(body);
-        question.getContents().setCreateDate(new Date());
-
-        questionRepository.save(question);
-
-        return "redirect:/questions";
+        Question question = questionService.create(questionForm, currentUser.getUser());
+        return "redirect:/questions/" + question.getId();
     }
 
     @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
-    public String editQuestion(Model model,
-            @PathVariable(value="questionId") Question question) {
+    String editQuestion(Model model,
+                        @PathVariable(value = "questionId") Question question) {
 
         model.addAttribute(question);
         return "qna/editQuestion";
@@ -82,75 +76,59 @@ public class QnaController {
 
     @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
-    public String editQuestion(
-            @PathVariable(value="questionId") Question question,
-            @RequestParam String title,
-            @RequestParam String body) {
+    String editQuestion(@PathVariable(value = "questionId") long questionId,
+                        QuestionForm questionForm,
+                        @AuthenticationPrincipal CurrentUser currentUser) {
 
-        question.setTitle(title);
-        question.getContents().setBody(body);
-        question.getContents().setModifyDate(new Date());
-
-        questionRepository.save(question);
-
-        return "redirect:/questions/" + question.getId();
+        questionService.edit(questionForm, currentUser.getUser());
+        return "redirect:/questions/" + questionId;
     }
 
 
     @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
     @RequestMapping(value = "/questions/{questionId}/delete")
-    public String deleteQuestion(
-            @PathVariable long questionId
-    ) {
-        questionRepository.delete(questionId);
+    String deleteQuestion(@PathVariable long questionId) {
+
+        questionService.delete(questionId);
         return "redirect:/questions";
     }
 
+    //  pathVariable을 사용하여 바로 question을 가져오는 방식이 간단하긴 한데,
+    // Serivce를 거치지 않는다는 점에서 이걸 써도 되는건지 고민됨
+    // 우선 최소한만 고친다가 원칙이므로 여기는 손대지 않는다.
     @RequestMapping("/questions/{questionId}")
-    public String question(Model model, @PathVariable(value="questionId") Question question) {
-        model.addAttribute("question", question);
+    String question(Model model,
+                    @PathVariable(value = "questionId") Question question) {
 
+        model.addAttribute("question", question);
         return "qna/question";
     }
-
 
     @ResponseBody
     @PreAuthorize("isFullyAuthenticated()")
     @RequestMapping(value = "/questions/{questionId}/answers", method = POST)
-    public void addAnswer(
-            @PathVariable(value="questionId") Question question,
-            @RequestParam String body) {
+    void addAnswer(@PathVariable(value = "questionId") Question question,
+                   @AuthenticationPrincipal CurrentUser currentUser,
+                   AnswerForm answerForm) {
 
-        Answer answer = new Answer();
-        answer.getContents().setBody(body);
-        answer.getContents().setCreateDate(new Date());
-        answer.setQuestion(question);
-
-        answerRepository.save(answer);
+        answerService.create(answerForm, question, currentUser.getUser());
     }
-
 
     @ResponseBody
     @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
-    public void editAnswer(
-            @PathVariable(value="questionId") Question question,
-            @PathVariable(value="answerId") Answer answer,
-            @RequestParam String body) {
+    void editAnswer(@AuthenticationPrincipal CurrentUser currentUser,
+                    AnswerForm answerForm) {
 
-        answer.getContents().setBody(body);
-        answer.getContents().setModifyDate(new Date());
-        answer.setQuestion(question);
-
-        answerRepository.save(answer);
+        answerService.edit(answerForm, currentUser.getUser());
     }
 
     @ResponseBody
     @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/delete", method = POST)
-    public void deleteAnswer(
-            @PathVariable long answerId) {
-        answerRepository.delete(answerId);
+    void deleteAnswer(@PathVariable long answerId) {
+
+        answerService.delete(answerId);
     }
 
 }

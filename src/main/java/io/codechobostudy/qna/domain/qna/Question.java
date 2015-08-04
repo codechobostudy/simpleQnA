@@ -14,7 +14,9 @@ public class Question {
     private String title;
     @Embedded
     private Contents contents = new Contents();
-    @OneToMany(mappedBy = "question")
+
+    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name="QUESTION_ID")
     private List<Answer> answers = new ArrayList<>();
 
     @ManyToMany

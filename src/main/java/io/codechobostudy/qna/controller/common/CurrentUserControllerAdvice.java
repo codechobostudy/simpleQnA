@@ -1,10 +1,13 @@
-package io.codechobostudy.qna.controller.advisor;
+package io.codechobostudy.qna.controller.common;
 
 import io.codechobostudy.qna.domain.auth.CurrentUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+/**
+ * 모든뷰에 currentUser를 추가한다.
+ */
 @ControllerAdvice
 public class CurrentUserControllerAdvice {
 
@@ -15,6 +18,4 @@ public class CurrentUserControllerAdvice {
         else
             return (CurrentUser) authentication.getPrincipal();
     }
-
-
 }

@@ -144,13 +144,12 @@
             url: "/questions/" + _questionId + "/answers/" + answerId + "/edit",
             method: "post",
             data: {
+                id : answerId,
                 body : body,
                 "${_csrf.parameterName}": "${_csrf.token}"
             }
         }).done(function () {
             $answer.find(".contents-body").html(body);
-            console.log(body);
-            console.log($answer);
             $answer.show();
             $editor.destroy();
             $editorWrapper.hide();

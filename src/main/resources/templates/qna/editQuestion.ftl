@@ -13,6 +13,7 @@
 
     <form class="form-horizontal" id="editQuestionForm" action="/questions/${question.id}/edit" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <input type="hidden" name="id" value="${question.id}"/>
         <input type="hidden" name="body"/>
 
         <div class="form-group">
