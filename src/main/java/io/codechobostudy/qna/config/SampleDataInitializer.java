@@ -35,12 +35,20 @@ public class SampleDataInitializer {
     public void initQna() throws InterruptedException {
 
         //create user
-        UserCreateForm userCreateForm = new UserCreateForm();
-        userCreateForm.setEmail("admin@localhost");
-        userCreateForm.setPassword("admin");
-        userCreateForm.setPasswordRepeated("admin");
+        UserCreateForm adminUserCreateForm = new UserCreateForm();
+        adminUserCreateForm.setEmail("admin@localhost");
+        adminUserCreateForm.setPassword("admin");
+        adminUserCreateForm.setPasswordRepeated("admin");
 
-        User user = userService.create(userCreateForm, Role.ADMIN);
+        User admin = userService.create(adminUserCreateForm, Role.ADMIN);
+
+        //create user
+        UserCreateForm defaultUserCreateForm = new UserCreateForm();
+        defaultUserCreateForm.setEmail("user@localhost");
+        defaultUserCreateForm.setPassword("user");
+        defaultUserCreateForm.setPasswordRepeated("user");
+
+        userService.create(defaultUserCreateForm, Role.USER);
 
         //create tags
         List<Tag> tags = new ArrayList<Tag>() {{
@@ -64,7 +72,7 @@ public class SampleDataInitializer {
             questionForm.setTitle(Lorem.getTitle(2, 7));
             questionForm.setBody(Lorem.getHtmlParagraphs(2, 5));
 
-            Question question = questionService.create(questionForm, user);
+            Question question = questionService.create(questionForm, admin);
             questions.add(question);
         }
 
@@ -74,7 +82,7 @@ public class SampleDataInitializer {
             for (int idx = 0; idx < max; idx++) {
                 AnswerForm answerForm = new AnswerForm();
                 answerForm.setBody(Lorem.getHtmlParagraphs(2, 5));
-                answerService.create(answerForm, question, user);
+                answerService.create(answerForm, question, admin);
             }
         }
 

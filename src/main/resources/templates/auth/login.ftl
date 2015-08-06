@@ -59,7 +59,18 @@
     <form class="form-login" role="form" action="/login" method="post">
         <h1 class="form-signin-heading">Please Login</h1>
 
-        <div class="alert alert-info" role="alert">admin@localhost / admin 으로 접속하세요!!</div>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                테스트 로그인 :
+                <button type="button" class="admin-test-login btn btn-default" data-toggle="tooltip"
+                        title="admin@localhost / admin">admin
+                </button>
+                <button type="button" class="user-test-login btn btn-default" data-toggle="tooltip"
+                        title="user@localhost / user">user
+                </button>
+            </div>
+        </div>
 
         <#if error.isPresent()>
             <div class="alert alert-warning" role="alert">이메일이나 비밀번호가 일치하지 않습니다.</div>
@@ -94,10 +105,28 @@
                 </strong>
             </div>
         </div>
+
     </form>
 
 </div><!-- /.container --!>
 
 </#assign>
 
-<@layout.basic title="Login" css=style contents=contents/>
+
+<#assign script>
+<script>
+    $('[data-toggle="tooltip"]').tooltip()
+
+    $(".admin-test-login").on("click", function(){
+        $("input[name=email]").val("admin@localhost");
+        $("input[name=password]").val("admin");
+    });
+
+    $(".user-test-login").on("click", function(){
+        $("input[name=email]").val("user@localhost");
+        $("input[name=password]").val("user");
+    });
+</script>
+</#assign>
+
+<@layout.basic title="Login" css=style contents=contents script=script/>
