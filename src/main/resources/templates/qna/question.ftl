@@ -66,7 +66,7 @@
                             <div class="contents-date">작성일 : ${answer.editDate}</div>
                         </div>
 
-                        <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == question.user.id)>
+                        <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == answer.editUser.id)>
                             <div class="btn-group" role="group">
                                 <button class="btn-edit-answer btn btn-default">수정</button>
                                 <button class="btn-delete-answer btn btn-default">삭제</button>
@@ -77,7 +77,7 @@
                 </div>
                 <!--/ .answer-->
 
-                <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == question.user.id)>
+                <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == answer.editUser.id)>
                     <div class="answer-editor-wrapper" style="display: none">
                         <div class="answer-editor"></div>
                         <button class="btn-edit-confirm-answer btn btn-default">확인</button>
