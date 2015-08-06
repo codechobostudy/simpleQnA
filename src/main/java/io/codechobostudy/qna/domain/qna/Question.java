@@ -1,56 +1,61 @@
 package io.codechobostudy.qna.domain.qna;
 
+import io.codechobostudy.qna.domain.auth.User;
+
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Question {
     @Id
     @GeneratedValue
     private Long id;
-    private String title;
-    @Embedded
-    private Contents contents = new Contents();
-
-    @OneToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER)
+    private QuestionContent content;
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name="QUESTION_ID")
-    private List<Answer> answers = new ArrayList<>();
-
+    private List<QuestionContent> contentHistory = new ArrayList<>();
+    @OneToMany(mappedBy = "question")
+    private List<Answer> answers;
     @ManyToMany
-    @JoinTable(
-            name="X_QUESTION_TAG",
-            joinColumns={@JoinColumn(name="QUESTION_ID")},
-            inverseJoinColumns={@JoinColumn(name="TAG_ID")})
-    private Set<Tag> tags = new HashSet<>();
-
-    public Question() {
-    }
+    private List<Tag> tags = new ArrayList<>();
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public QuestionContent getContent() {
+        return content;
+    }
+
+    public void setContent(QuestionContent content) {
+        this.content = content;
+    }
+
+    public List<QuestionContent> getContentHistory() {
+        return contentHistory;
     }
 
     public String getTitle() {
-        return title;
+        return content.getTitle();
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getBody() {
+        return content.getBody();
     }
 
-    public Contents getContents() {
-        return contents;
+    public Date getEditDate() {
+        return content.getDate();
     }
 
-    public void setContents(Contents contents) {
-        this.contents = contents;
+    public User getEditUser() {
+        return content.getUser();
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 
     public List<Answer> getAnswers() {
@@ -59,13 +64,5 @@ public class Question {
 
     public void setAnswers(List<Answer> answers) {
         this.answers = answers;
-    }
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 }

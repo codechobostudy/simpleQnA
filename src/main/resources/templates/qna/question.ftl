@@ -29,12 +29,12 @@
 
     <div class="question-contents panel panel-default">
         <div class="contents-body panel-body">
-        ${question.contents.body}
+        ${question.body}
         </div>
 
         <div class="contents-metadata panel-footer">
-            <div class="contents-author">작성자 : ${question.contents.user.email}</div>
-            <div class="contents-date">작성일 : ${question.contents.createDate}</div>
+            <div class="contents-author">작성자 : ${question.editUser.email}</div>
+            <div class="contents-date">작성일 : ${question.editDate}</div>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
 
     <div class="question-action btn-group" role="group">
         <a href="/questions" class="btn btn-default">목록으로</a>
-        <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == question.user.id)>
+        <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == question.editUser.id)>
             <a href="/questions/${question.id}/edit" class="btn btn-default pull-right">수정</a>
             <a href="/questions/${question.id}/delete" class="btn btn-default pull-right">삭제</a>
         </#if>
@@ -59,11 +59,11 @@
             <div class="answer-wrapper" data-answer-id="${answer.id}">
 
                 <div class="answer panel panel-default">
-                    <div class="contents-body panel-body">${answer.contents.body}</div>
+                    <div class="contents-body panel-body">${answer.body}</div>
                     <div class="panel-footer">
                         <div class="answer-meta-data">
-                            <div class="contents-author">작성자 : ${answer.contents.user.email}</div>
-                            <div class="contents-date">작성일 : ${answer.contents.createDate}</div>
+                            <div class="contents-author">작성자 : ${answer.editUser.email}</div>
+                            <div class="contents-date">작성일 : ${answer.editDate}</div>
                         </div>
 
                         <#if currentUser?? && (currentUser.role == "ADMIN" || currentUser.user.id == question.user.id)>

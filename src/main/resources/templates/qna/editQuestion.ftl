@@ -27,7 +27,7 @@
             <div class="form-group">
                 <label class="col-sm-2 control-label">본문</label>
                 <div class="col-sm-10">
-                    <div id="contentsBodyEditor">${question.contents.body}</div>
+                    <div id="contentsBodyEditor">${question.body}</div>
                 </div>
             </div>
 

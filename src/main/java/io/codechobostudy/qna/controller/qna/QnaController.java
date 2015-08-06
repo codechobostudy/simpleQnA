@@ -65,7 +65,7 @@ public class QnaController {
         return "redirect:/questions/" + question.getId();
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.content.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = GET)
     String editQuestion(Model model,
                         @PathVariable(value = "questionId") Question question) {
@@ -74,7 +74,7 @@ public class QnaController {
         return "qna/editQuestion";
     }
 
-    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.content.user")
     @RequestMapping(value = "/questions/{questionId}/edit", method = POST)
     String editQuestion(@PathVariable(value = "questionId") long questionId,
                         QuestionForm questionForm,
@@ -85,7 +85,7 @@ public class QnaController {
     }
 
 
-    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.contents.user")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #question.content.user")
     @RequestMapping(value = "/questions/{questionId}/delete")
     String deleteQuestion(@PathVariable long questionId) {
 
@@ -115,7 +115,7 @@ public class QnaController {
     }
 
     @ResponseBody
-    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.content.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/edit", method = POST)
     void editAnswer(@AuthenticationPrincipal CurrentUser currentUser,
                     AnswerForm answerForm) {
@@ -124,7 +124,7 @@ public class QnaController {
     }
 
     @ResponseBody
-    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.contents.user")
+    @PreAuthorize("hasAuthority('ADMIN') or principal == #answer.content.user")
     @RequestMapping(value = "/questions/{questionId}/answers/{answerId}/delete", method = POST)
     void deleteAnswer(@PathVariable long answerId) {
 

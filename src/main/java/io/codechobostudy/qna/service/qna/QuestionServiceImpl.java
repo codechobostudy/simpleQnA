@@ -1,10 +1,10 @@
 package io.codechobostudy.qna.service.qna;
 
 import io.codechobostudy.qna.domain.auth.User;
-import io.codechobostudy.qna.domain.qna.Answer;
-import io.codechobostudy.qna.domain.qna.Contents;
 import io.codechobostudy.qna.domain.qna.Question;
+import io.codechobostudy.qna.domain.qna.QuestionContent;
 import io.codechobostudy.qna.dto.qna.QuestionForm;
+import io.codechobostudy.qna.repository.qna.QuestionContentRepository;
 import io.codechobostudy.qna.repository.qna.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,15 +15,17 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public class QuestionServiceImpl implements QuestionService{
+public class QuestionServiceImpl implements QuestionService {
 
     @Autowired
     QuestionRepository questionRepository;
+    @Autowired
+    QuestionContentRepository questionContentRepository;
 
     @Override
     public Page<Question> findPages(int page, int size) {
         Page<Question> questionPage = questionRepository.findAll(
-                new PageRequest(page - 1, size, Sort.Direction.DESC, "contents.createDate")
+                new PageRequest(page - 1, size, Sort.Direction.DESC, "content.date")
         );
 
         return questionPage;
@@ -31,26 +33,27 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public Question create(QuestionForm questionForm, User user) {
+        QuestionContent content = convertToQuestionContent(questionForm, user);
+        questionContentRepository.save(content);
+
         Question question = new Question();
-        question.setTitle(questionForm.getTitle());
-        Contents qContents = question.getContents();
-        qContents.setBody(questionForm.getBody());
-        qContents.setCreateDate(new Date());
-        qContents.setUser(user);
 
-        questionRepository.save(question);
+        //TODO tag처리
+        //question.setTag();
+        question.setContent(content);
+        question.getContentHistory().add(content);
 
-        return question;
+        return questionRepository.save(question);
     }
 
     @Override
     public Question edit(QuestionForm questionForm, User user) {
+        QuestionContent content = convertToQuestionContent(questionForm, user);
+        questionContentRepository.save(content);
+
         Question question = questionRepository.findOne(questionForm.getId());
-        question.setTitle(questionForm.getTitle());
-        Contents qContents = question.getContents();
-        qContents.setBody(questionForm.getBody());
-        qContents.setCreateDate(new Date());
-        qContents.setUser(user);
+        question.setContent(content);
+        question.getContentHistory().add(content);
 
         return questionRepository.save(question);
     }
@@ -60,9 +63,16 @@ public class QuestionServiceImpl implements QuestionService{
         questionRepository.delete(questionId);
     }
 
-    @Override
-    public void addAnswer(Question question, Answer answer) {
-        question.getAnswers().add(answer);
-        questionRepository.save(question);
+
+    private QuestionContent convertToQuestionContent(QuestionForm form, User user) {
+        QuestionContent content = new QuestionContent();
+        content.setTitle(form.getTitle());
+        content.setBody(form.getBody());
+        content.setDate(new Date());
+        content.getTags().addAll(form.getTags());
+        content.setUser(user);
+        content.setChangeLog(form.getChangeLog());
+
+        return content;
     }
 }

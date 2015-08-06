@@ -1,10 +1,14 @@
 package io.codechobostudy.qna.dto.qna;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class QuestionForm {
     private long id;
     private String title;
     private String body;
-    private long tagId[];
+    private List<String> tags = new ArrayList<>();
+    private String changeLog;
 
     public long getId() {
         return id;
@@ -14,12 +18,12 @@ public class QuestionForm {
         this.id = id;
     }
 
-    public long[] getTagId() {
-        return tagId;
+    public List<String> getTags() {
+        return tags;
     }
 
-    public void setTagId(long[] tagId) {
-        this.tagId = tagId;
+    public void setTags(List<String> tags) {
+        this.tags = tags;
     }
 
     public String getTitle() {
@@ -36,5 +40,13 @@ public class QuestionForm {
 
     public void setBody(String body) {
         this.body = body;
+    }
+
+    public String getChangeLog() {
+        return changeLog;
+    }
+
+    public void setChangeLog(String changeLog) {
+        this.changeLog = changeLog;
     }
 }

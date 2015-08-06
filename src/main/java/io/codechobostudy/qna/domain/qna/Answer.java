@@ -1,6 +1,11 @@
 package io.codechobostudy.qna.domain.qna;
 
+import io.codechobostudy.qna.domain.auth.User;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Answer {
@@ -8,30 +13,49 @@ public class Answer {
     @GeneratedValue
     private Long id;
 
-    @Embedded
-    private Contents contents = new Contents();
+    @ManyToOne
+    private Question question;
 
-    public Answer() {
-    }
+    @OneToOne(fetch = FetchType.EAGER)
+    private AnswerContent content;
 
-    public Answer(Contents contents) {
-        this.contents = contents;
-    }
-
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ANSWER_ID")
+    private List<AnswerContent> contentHistory = new ArrayList<>();
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Question getQuestion() {
+        return question;
     }
 
-    public Contents getContents() {
-        return contents;
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 
-    public void setContents(Contents contents) {
-        this.contents = contents;
+    public AnswerContent getContent() {
+        return content;
+    }
+
+    public void setContent(AnswerContent content) {
+        this.content = content;
+    }
+
+    public List<AnswerContent> getContentHistory() {
+        return contentHistory;
+    }
+
+    public String getBody() {
+        return content.getBody();
+    }
+
+    public Date getEditDate() {
+        return content.getDate();
+    }
+
+    public User getEditUser() {
+        return content.getUser();
     }
 }
