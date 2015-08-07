@@ -6,15 +6,25 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
+@Table(name="ANSWER_CONTENT")
 public class AnswerContent {
     @Id
     @GeneratedValue
+    @Column(name="ID")
     private long id;
+
     @Lob
+    @Column(name="BODY")
     private String body;
+
+    @Column(name="DATE")
     private Date date;
+
     @ManyToOne
+    @JoinColumn(name="USER_ID")
     private User user;
+
+    @Column(name="CHANGE_LOG")
     private String changeLog;
 
     public long getId() {

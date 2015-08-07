@@ -5,13 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "TAG")
 public class Tag {
+
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
+    @Column(name = "NAME")
     private String name;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "tags")
     private List<Question> questions = new ArrayList<>();
 
     public Tag(String name) {

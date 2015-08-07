@@ -7,8 +7,12 @@ import java.util.Map;
 
 @Embeddable
 public class Vote {
+    @Column(name="VOTE_UP")
     protected Integer up = 0;
+
+    @Column(name="VOTE_DOWN")
     protected Integer down = 0;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     protected Map<User, VoteType> userVoteMap;

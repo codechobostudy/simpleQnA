@@ -8,20 +8,28 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "ANSWER")
 public class Answer {
+
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
+
     @ManyToOne
+    @JoinColumn(name = "QUESTION_ID")
     private Question question;
+
     @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ANSWER_CONTENT_ID")
     private AnswerContent content;
+
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ANSWER_ID")
     private List<AnswerContent> contentHistory = new ArrayList<>();
 
     @Embedded
-    @AssociationOverride(name="userVoteMap", joinTable = @JoinTable(name="X_ANSWER_VOTE_USER"))
+    @AssociationOverride(name = "userVoteMap", joinTable = @JoinTable(name = "X_ANSWER_VOTE_USER"))
     private Vote vote;
 
     public Long getId() {
