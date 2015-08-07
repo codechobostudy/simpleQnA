@@ -15,12 +15,15 @@ public class Question {
     @OneToOne(fetch = FetchType.EAGER)
     private QuestionContent content;
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name="QUESTION_ID")
+    @JoinColumn(name = "QUESTION_ID")
     private List<QuestionContent> contentHistory = new ArrayList<>();
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
     @ManyToMany
     private List<Tag> tags = new ArrayList<>();
+    @Embedded
+    @AssociationOverride(name="userVoteMap", joinTable = @JoinTable(name="X_QUESTION_VOTE_USER"))
+    private Vote vote;
 
     public Long getId() {
         return id;
@@ -64,5 +67,9 @@ public class Question {
 
     public void setAnswers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    public Vote getVote() {
+        return vote;
     }
 }

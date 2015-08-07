@@ -50,13 +50,13 @@ public class QnaController {
         return "qna/questions";
     }
 
-    @PreAuthorize("isFullyAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/questions/add", method = GET)
     String addQuestion() {
         return "qna/addQuestion";
     }
 
-    @PreAuthorize("isFullyAuthenticated()")
+    @PreAuthorize("isAuthenticated()")
     @RequestMapping(value = "/questions/add", method = POST)
     String addQuestion(QuestionForm questionForm,
                        @AuthenticationPrincipal CurrentUser currentUser) {

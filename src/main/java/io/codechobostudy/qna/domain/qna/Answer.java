@@ -12,16 +12,17 @@ public class Answer {
     @Id
     @GeneratedValue
     private Long id;
-
     @ManyToOne
     private Question question;
-
     @OneToOne(fetch = FetchType.EAGER)
     private AnswerContent content;
-
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ANSWER_ID")
     private List<AnswerContent> contentHistory = new ArrayList<>();
+
+    @Embedded
+    @AssociationOverride(name="userVoteMap", joinTable = @JoinTable(name="X_ANSWER_VOTE_USER"))
+    private Vote vote;
 
     public Long getId() {
         return id;
@@ -57,5 +58,9 @@ public class Answer {
 
     public User getEditUser() {
         return content.getUser();
+    }
+
+    public Vote getVote() {
+        return vote;
     }
 }
