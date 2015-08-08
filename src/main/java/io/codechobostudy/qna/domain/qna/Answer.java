@@ -29,8 +29,14 @@ public class Answer {
     private List<AnswerContent> contentHistory = new ArrayList<>();
 
     @Embedded
-    @AssociationOverride(name = "userVoteMap", joinTable = @JoinTable(name = "X_ANSWER_VOTE_USER"))
+    @AssociationOverride(
+            name = "userVoteMap",
+            joinTable = @JoinTable(name = "X_ANSWER_VOTE_USER")
+    )
     private Vote vote;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<AnswerComment> comments = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -70,5 +76,9 @@ public class Answer {
 
     public Vote getVote() {
         return vote;
+    }
+
+    public List<AnswerComment> getComments() {
+        return comments;
     }
 }

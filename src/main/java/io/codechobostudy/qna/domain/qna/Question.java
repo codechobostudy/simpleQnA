@@ -27,7 +27,7 @@ public class Question {
     @OneToMany(mappedBy = "question")
     private List<Answer> answers;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name="X_QUESTION_TAG")
     private List<Tag> tags = new ArrayList<>();
 
@@ -37,6 +37,9 @@ public class Question {
             joinTable = @JoinTable(name="X_QUESTION_VOTE_USER")
     )
     private Vote vote;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<QuestionComment> comments = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -84,5 +87,9 @@ public class Question {
 
     public Vote getVote() {
         return vote;
+    }
+
+    public List<QuestionComment> getComments() {
+        return comments;
     }
 }
