@@ -3,9 +3,11 @@ package io.codechobostudy.qna.service.qna;
 import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.domain.qna.Question;
 import io.codechobostudy.qna.domain.qna.QuestionContent;
+import io.codechobostudy.qna.domain.qna.Tag;
 import io.codechobostudy.qna.dto.qna.QuestionForm;
 import io.codechobostudy.qna.repository.qna.QuestionContentRepository;
 import io.codechobostudy.qna.repository.qna.QuestionRepository;
+import io.codechobostudy.qna.repository.qna.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,6 +23,8 @@ public class QuestionServiceImpl implements QuestionService {
     QuestionRepository questionRepository;
     @Autowired
     QuestionContentRepository questionContentRepository;
+    @Autowired
+    TagRepository tagRepository;
 
     @Override
     public Page<Question> findPages(int page, int size) {
@@ -38,8 +42,13 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = new Question();
 
-        //TODO tag처리
-        //question.setTag();
+        // FIXME 리팩토링 필요
+        for (String tagStr : questionForm.getTags()) {
+            Tag tag = tagRepository.findOneByName(tagStr);
+            if (tag == null) tag = tagRepository.save(new Tag(tagStr));
+            question.getTags().add(tag);
+        }
+
         question.setContent(content);
         question.getContentHistory().add(content);
 
@@ -54,6 +63,13 @@ public class QuestionServiceImpl implements QuestionService {
         Question question = questionRepository.findOne(questionForm.getId());
         question.setContent(content);
         question.getContentHistory().add(content);
+
+        // FIXME 리팩토링 필요
+        for (String tagStr : questionForm.getTags()) {
+            Tag tag = tagRepository.findOneByName(tagStr);
+            if (tag == null) tag = tagRepository.save(new Tag(tagStr));
+            question.getTags().add(tag);
+        }
 
         return questionRepository.save(question);
     }

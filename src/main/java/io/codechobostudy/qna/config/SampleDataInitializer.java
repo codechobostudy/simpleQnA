@@ -4,7 +4,6 @@ import com.thedeanda.lorem.Lorem;
 import io.codechobostudy.qna.domain.auth.Role;
 import io.codechobostudy.qna.domain.auth.User;
 import io.codechobostudy.qna.domain.qna.Question;
-import io.codechobostudy.qna.domain.qna.Tag;
 import io.codechobostudy.qna.dto.auth.UserCreateForm;
 import io.codechobostudy.qna.dto.qna.AnswerForm;
 import io.codechobostudy.qna.dto.qna.QuestionForm;
@@ -17,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 // TODO 나중에 정리하기
@@ -51,19 +51,17 @@ public class SampleDataInitializer {
         userService.create(defaultUserCreateForm, Role.USER);
 
         //create tags
-        List<Tag> tags = new ArrayList<Tag>() {{
-            add(new Tag("Java"));
-            add(new Tag("Spring"));
-            add(new Tag("Spring boot"));
-            add(new Tag("Ruby"));
-            add(new Tag("Python"));
-            add(new Tag("Database"));
-            add(new Tag("MySql"));
-            add(new Tag("Elastic search"));
-            add(new Tag("Hadoop"));
+        List<String> tags = new ArrayList<String>() {{
+            add("Java");
+            add("Spring");
+            add("Spring boot");
+            add("Ruby");
+            add("Python");
+            add("Database");
+            add("MySql");
+            add("Elastic search");
+            add("Hadoop");
         }};
-        tagRepository.save(tags);
-
 
         List<Question> questions = new ArrayList<>();
 
@@ -72,10 +70,15 @@ public class SampleDataInitializer {
             questionForm.setTitle(Lorem.getTitle(2, 7));
             questionForm.setBody(Lorem.getHtmlParagraphs(2, 5));
 
+            Collections.shuffle(tags);
+            int max = (int) (5 * Math.random());
+            for (int tagIdx = 0; tagIdx < max; tagIdx++) {
+                questionForm.getTags().add(tags.get(tagIdx));
+            }
+
             Question question = questionService.create(questionForm, admin);
             questions.add(question);
         }
-
 
         for (Question question : questions) {
             int max = (int) (10 * Math.random());

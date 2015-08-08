@@ -16,6 +16,16 @@
         <input type="hidden" name="body"/>
 
         <div class="form-group">
+            <label class="col-sm-2 control-label">태그</label>
+
+            <div class="tags col-sm-10">
+                <div>
+                    <button class="btn-add-tag btn btn-default">tag 추가</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
             <label class="col-sm-2 control-label">제목</label>
 
             <div class="col-sm-10">
@@ -54,6 +64,22 @@
         var body = $('#contentsBodyEditor').code();
         $("[name=body]").val(body);
     });
+
+    $('.btn-add-tag').on('click', function () {
+        $(".tags").append(
+                '<div class="tag-wrapper">' +
+                '  <input type="text" name="tags"/>' +
+                '  <button class="btn-remove-tag btn btn-default">삭제</button>' +
+                '</div>'
+        );
+        return false;
+    });
+
+    $(".tags").on("click", "button.btn-remove-tag", function () {
+        $(this).parents('.tag-wrapper').remove();
+        return false;
+    });
+
 </script>
 </#assign>
 
