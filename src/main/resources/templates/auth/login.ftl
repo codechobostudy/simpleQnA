@@ -2,6 +2,20 @@
 <#-- @ftlvariable name="error" type="java.util.Optional<String>" -->
 <#import "../_basicLayout.ftl" as layout>
 
+<#--for dev..-->
+<#assign script>
+<script>
+    $("#quickloginadmin").click(function(){
+        $("#email").val("admin@localhost");
+        $("#password").val("admin");
+    });
+    $("#quickloginuser").click(function(){
+        $("#email").val("user@localhost");
+        $("#password").val("user");
+    });
+</script>
+</#assign>
+
 <#assign style>
 <style>
     body {
@@ -53,13 +67,18 @@
 </style>
 </#assign>
 
+
+
 <#assign contents>
 <div class="container">
 
     <form class="form-login" role="form" action="/login" method="post">
         <h1 class="form-signin-heading">Please Login</h1>
 
-        <div class="alert alert-info" role="alert">admin@localhost / admin 으로 접속하세요!!</div>
+        <div class="alert alert-info" role="alert">admin@localhost / admin 으로 접속하세요!!
+            <button id="quickloginadmin">퀵로긴(admin)</button>
+            <button id="quickloginuser">퀵로긴(user)</button>
+        </div>
 
         <#if error.isPresent()>
             <div class="alert alert-warning" role="alert">이메일이나 비밀번호가 일치하지 않습니다.</div>
@@ -67,10 +86,10 @@
         <div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <label for="email" class="sr-only">Email address</label>
-            <input type="email" class="form-control" name="email" placeholder="Email" required autofocus/>
+            <input id="email" type="email" class="form-control" name="email" placeholder="Email" required autofocus/>
 
             <label for="password" class="sr-only">Password</label>
-            <input type="password" class="form-control" name="password" placeholder="Password" required/>
+            <input id="password" type="password" class="form-control" name="password" placeholder="Password" required/>
 
             <div class="checkbox">
                 <label>
@@ -100,4 +119,5 @@
 
 </#assign>
 
-<@layout.basic title="Login" css=style contents=contents/>
+
+<@layout.basic title="Login" css=style contents=contents script=script/>

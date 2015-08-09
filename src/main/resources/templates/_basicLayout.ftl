@@ -1,4 +1,5 @@
 <#macro basic title="code chobo study" css="" script="" contents="">
+<#import "navbar.ftl" as navbar>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -19,6 +20,8 @@ ${css}
 </head>
 
 <body>
+
+<@navbar.nav/>
 
 ${contents}
 
