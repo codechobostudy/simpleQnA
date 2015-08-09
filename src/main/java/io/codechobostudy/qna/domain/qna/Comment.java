@@ -1,31 +1,31 @@
 package io.codechobostudy.qna.domain.qna;
 
+
 import io.codechobostudy.qna.domain.auth.User;
 
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.MappedSuperclass;
 import java.util.Date;
 
-@Embeddable
-public class Contents {
-    @Lob
+@MappedSuperclass
+public class Comment {
+    @Id
+    @GeneratedValue
+    private long id;
+    @ManyToOne
+    private User user;
     private String body;
     private Date createDate;
     private Date modifyDate;
 
-    @ManyToOne
-    @JoinColumn(name="USER_ID")
-    private User user;
-
-    public Contents() {
+    public long getId() {
+        return id;
     }
 
-    public Contents(String body, Date createDate, User user) {
-        this.body = body;
-        this.createDate = createDate;
-        this.user = user;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public User getUser() {

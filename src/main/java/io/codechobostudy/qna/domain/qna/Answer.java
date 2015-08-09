@@ -1,35 +1,45 @@
 package io.codechobostudy.qna.domain.qna;
 
+import io.codechobostudy.qna.domain.auth.User;
+
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
+@Table(name = "ANSWER")
 public class Answer {
+
     @Id
     @GeneratedValue
+    @Column(name = "ID")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "QUESTION_ID")
     private Question question;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ANSWER_CONTENT_ID")
+    private AnswerContent content;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ANSWER_ID")
+    private List<AnswerContent> contentHistory = new ArrayList<>();
+
     @Embedded
-    private Contents contents = new Contents();
+    @AssociationOverride(
+            name = "userVoteMap",
+            joinTable = @JoinTable(name = "X_ANSWER_VOTE_USER")
+    )
+    private Vote vote;
 
-    public Answer() {
-    }
-
-    public Answer(Question question, Contents contents) {
-        this.question = question;
-        this.contents = contents;
-    }
-
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<AnswerComment> comments = new ArrayList<>();
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Question getQuestion() {
@@ -40,11 +50,35 @@ public class Answer {
         this.question = question;
     }
 
-    public Contents getContents() {
-        return contents;
+    public AnswerContent getContent() {
+        return content;
     }
 
-    public void setContents(Contents contents) {
-        this.contents = contents;
+    public void setContent(AnswerContent content) {
+        this.content = content;
+    }
+
+    public List<AnswerContent> getContentHistory() {
+        return contentHistory;
+    }
+
+    public String getBody() {
+        return content.getBody();
+    }
+
+    public Date getEditDate() {
+        return content.getDate();
+    }
+
+    public User getEditUser() {
+        return content.getUser();
+    }
+
+    public Vote getVote() {
+        return vote;
+    }
+
+    public List<AnswerComment> getComments() {
+        return comments;
     }
 }

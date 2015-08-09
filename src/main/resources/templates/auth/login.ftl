@@ -2,20 +2,6 @@
 <#-- @ftlvariable name="error" type="java.util.Optional<String>" -->
 <#import "../_basicLayout.ftl" as layout>
 
-<#--for dev..-->
-<#assign script>
-<script>
-    $("#quickloginadmin").click(function(){
-        $("#email").val("admin@localhost");
-        $("#password").val("admin");
-    });
-    $("#quickloginuser").click(function(){
-        $("#email").val("user@localhost");
-        $("#password").val("user");
-    });
-</script>
-</#assign>
-
 <#assign style>
 <style>
     body {
@@ -67,17 +53,23 @@
 </style>
 </#assign>
 
-
-
 <#assign contents>
 <div class="container">
 
     <form class="form-login" role="form" action="/login" method="post">
         <h1 class="form-signin-heading">Please Login</h1>
 
-        <div class="alert alert-info" role="alert">admin@localhost / admin 으로 접속하세요!!
-            <button id="quickloginadmin">퀵로긴(admin)</button>
-            <button id="quickloginuser">퀵로긴(user)</button>
+
+        <div class="panel panel-default">
+            <div class="panel-body">
+                테스트 로그인 :
+                <button type="button" class="admin-test-login btn btn-default" data-toggle="tooltip"
+                        title="admin@localhost / admin">admin
+                </button>
+                <button type="button" class="user-test-login btn btn-default" data-toggle="tooltip"
+                        title="user@localhost / user">user
+                </button>
+            </div>
         </div>
 
         <#if error.isPresent()>
@@ -86,10 +78,10 @@
         <div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
             <label for="email" class="sr-only">Email address</label>
-            <input id="email" type="email" class="form-control" name="email" placeholder="Email" required autofocus/>
+            <input type="email" class="form-control" name="email" placeholder="Email" required autofocus/>
 
             <label for="password" class="sr-only">Password</label>
-            <input id="password" type="password" class="form-control" name="password" placeholder="Password" required/>
+            <input type="password" class="form-control" name="password" placeholder="Password" required/>
 
             <div class="checkbox">
                 <label>
@@ -113,11 +105,28 @@
                 </strong>
             </div>
         </div>
+
     </form>
 
 </div><!-- /.container --!>
 
 </#assign>
 
+
+<#assign script>
+<script>
+    $('[data-toggle="tooltip"]').tooltip()
+
+    $(".admin-test-login").on("click", function(){
+        $("input[name=email]").val("admin@localhost");
+        $("input[name=password]").val("admin");
+    });
+
+    $(".user-test-login").on("click", function(){
+        $("input[name=email]").val("user@localhost");
+        $("input[name=password]").val("user");
+    });
+</script>
+</#assign>
 
 <@layout.basic title="Login" css=style contents=contents script=script/>

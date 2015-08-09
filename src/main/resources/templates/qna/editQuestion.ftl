@@ -13,6 +13,7 @@
 
     <form class="form-horizontal" id="editQuestionForm" action="/questions/${question.id}/edit" method="post">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <input type="hidden" name="id" value="${question.id}"/>
         <input type="hidden" name="body"/>
 
         <div class="form-group">
@@ -23,12 +24,30 @@
             </div>
         </div>
 
-            <div class="form-group">
-                <label class="col-sm-2 control-label">본문</label>
-                <div class="col-sm-10">
-                    <div id="contentsBodyEditor">${question.contents.body}</div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">태그</label>
+
+            <div class="tags col-sm-10">
+                <div>
+                    <button class="btn-add-tag btn btn-default">tag 추가</button>
                 </div>
+
+                <#list question.tags as tag>
+                    <div class="tag-wrapper">
+                        <input type="text" name="tags" value="${tag.name}"/>
+                        <button class="btn-remove-tag btn btn-default">삭제</button>
+                    </div>
+                </#list>
             </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">본문</label>
+
+            <div class="col-sm-10">
+                <div id="contentsBodyEditor">${question.body}</div>
+            </div>
+        </div>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
@@ -51,9 +70,25 @@
         location.href = "/questions/${question.id}";
     });
 
-    $("#editQuestionForm").submit(function(){
+    $("#editQuestionForm").submit(function () {
         var body = $('#contentsBodyEditor').code();
         $("[name=body]").val(body);
+    });
+
+
+    $('.btn-add-tag').on('click', function () {
+        $(".tags").append(
+                '<div class="tag-wrapper">' +
+                '  <input type="text" name="tags"/>' +
+                '  <button class="btn-remove-tag btn btn-default">삭제</button>' +
+                '</div>'
+        );
+        return false;
+    });
+
+    $(".tags").on("click", "button.btn-remove-tag", function () {
+        $(this).parents('.tag-wrapper').remove();
+        return false;
     });
 </script>
 </#assign>

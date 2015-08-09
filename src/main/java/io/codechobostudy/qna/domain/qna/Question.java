@@ -1,54 +1,80 @@
 package io.codechobostudy.qna.domain.qna;
 
+import io.codechobostudy.qna.domain.auth.User;
+
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
+@Table(name="QUESTION")
 public class Question {
+
     @Id
     @GeneratedValue
+    @Column(name="ID")
     private Long id;
-    private String title;
-    @Embedded
-    private Contents contents = new Contents();
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="QUESTION_CONTENT_ID")
+    private QuestionContent content;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "QUESTION_ID")
+    private List<QuestionContent> contentHistory = new ArrayList<>();
+
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers = new ArrayList<>();
+    private List<Answer> answers;
 
-    @ManyToMany
-    @JoinTable(
-            name="X_QUESTION_TAG",
-            joinColumns={@JoinColumn(name="QUESTION_ID")},
-            inverseJoinColumns={@JoinColumn(name="TAG_ID")})
-    private Set<Tag> tags = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="X_QUESTION_TAG")
+    private List<Tag> tags = new ArrayList<>();
 
-    public Question() {
-    }
+    @Embedded
+    @AssociationOverride(
+            name="userVoteMap",
+            joinTable = @JoinTable(name="X_QUESTION_VOTE_USER")
+    )
+    private Vote vote;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<QuestionComment> comments = new ArrayList<>();
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public QuestionContent getContent() {
+        return content;
+    }
+
+    public void setContent(QuestionContent content) {
+        this.content = content;
+    }
+
+    public List<QuestionContent> getContentHistory() {
+        return contentHistory;
     }
 
     public String getTitle() {
-        return title;
+        return content.getTitle();
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getBody() {
+        return content.getBody();
     }
 
-    public Contents getContents() {
-        return contents;
+    public Date getEditDate() {
+        return content.getDate();
     }
 
-    public void setContents(Contents contents) {
-        this.contents = contents;
+    public User getEditUser() {
+        return content.getUser();
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 
     public List<Answer> getAnswers() {
@@ -59,11 +85,11 @@ public class Question {
         this.answers = answers;
     }
 
-    public Set<Tag> getTags() {
-        return tags;
+    public Vote getVote() {
+        return vote;
     }
 
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
+    public List<QuestionComment> getComments() {
+        return comments;
     }
 }
